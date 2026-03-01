@@ -5,6 +5,13 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/authbox"
+    db_pool_size: int = 5          # Max persistent connections
+    db_max_overflow: int = 10      # Extra connections allowed above pool_size
+    db_pool_recycle: int = 300     # Recycle connections after 5 min (Supabase/pgbouncer safe)
+
+    # Server
+    port: int = 8000               # Render sets PORT env var automatically
+    environment: str = "development"  # "development" | "production"
 
     # JWT
     secret_key: str = "change-me-in-production"

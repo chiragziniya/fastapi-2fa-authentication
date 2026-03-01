@@ -1,0 +1,26 @@
+# ─── Render Blueprint (Infrastructure-as-Code) ────────────────────
+# Deploy: Link this repo in Render → "New Blueprint Instance"
+# Docs:   https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: private-auth-box-api
+    runtime: python
+    region: singapore          # Change to your preferred region
+    plan: free                 # free | starter | standard | pro
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 120 --access-logfile - --error-logfile -
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.11"
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false            # Set manually in Render dashboard
+      - key: SECRET_KEY
+        generateValue: true    # Render auto-generates a secure random value
+      - key: FRONTEND_URL
+        sync: false            # Set to your deployed frontend URL
+      - key: ALLOWED_ORIGINS
+        sync: false            # Comma-separated extra origins
